@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+    <link rel="stylesheet" type="text/css" href="style.css">
+  </head>
+
+
+  <body>
+
+<main>
+
+<!-- <h1>Wordplay</h1> -->
+<!-- <p> hello there<p> -->
+
+<h3>Racer</h3>
+<div id="messages"></div>
+
+<br>
+<div>
+<input type='text' id='entry_text'>
+<input type='button' id='entry_button' value='Do it!'>
+<!-- onClick='javascript:goTo()'> -->
+</div>
+
+<br>
+<hr>
+<h3>Debug</h3>
+<div id="debug"></div>
+
+
+
+<script>
+function websocket(addr)
+{
+    return new WebSocket(addr);
+}
+</script>
+<script src='__javascript__/client.js'></script>
+
+<br>
+<br>
+<br>
+<hr>
+<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
+
+    </main>
+
+<script type="text/javascript">
+WebFontConfig = {
+  google: {
+    families: ['Roboto:300,400,500']
+  }
+};
+
+(function(d) {
+  var wf = d.createElement('script'), s = d.scripts[0];
+  wf.src = 'https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js';
+  s.parentNode.insertBefore(wf, s);
+})(document);
+</script>
+  </body>
+
