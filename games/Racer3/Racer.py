@@ -1,10 +1,26 @@
 #!/usr/bin/python3
 
 
+import os, sys
+from time import sleep
+
+_print = print
+def print(*args, **kw):
+    _print(*args, **kw)
+    sys.stdout.flush()
+
+_input = input
+def input(*args, **kw):
+    print(*args, **kw)
+    return _input()
+
+
+
 import pickle
 from time import sleep as sh
 from random import randint as d, choice
 from Racer_data import *
+
 
 
 Heart = True
@@ -100,7 +116,8 @@ def weather():
 
 def clr():
 
-    print('\n' * 100)
+    #print('\n' * 100)
+    print("CLEAR")
 
 
 def bag():

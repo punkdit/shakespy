@@ -1,4 +1,30 @@
-/* Base styles */
+
+input[type="text"] {
+  display: block;
+  margin: 0;
+  width: 100%;
+  font-family: sans-serif;
+  font-size: 18px;
+  appearance: none;
+  box-shadow: none;
+  border-radius: none;
+}
+
+input[type="text"]:focus {
+  outline: none;
+}
+
+input[type="text"] {
+  padding: 10px;
+  border: solid 1px #dcdcdc;
+  transition: box-shadow 0.3s, border 0.3s;
+}
+input[type="text"]:focus,
+input[type="text"].focus {
+  border: solid 1px #707070;
+  box-shadow: 0 0 5px 1px #969696;
+}
+
 
 * { -webkit-tap-highlight-color:rgba(0,0,0,0); }
 
@@ -16,11 +42,6 @@ hr {
 img {
   height: auto;
   max-width: 100%;
-}
-
-pre {
-  overflow: auto;
-  white-space: pre-wrap;
 }
 
 canvas {
@@ -66,8 +87,6 @@ h2 {
   padding-top: 1em;
 }
 
-/* 04 Color and contrast */
-
 body {
   color: #555;
 }
@@ -78,46 +97,13 @@ strong {
   color: #333;
 }
 
-/* 05 Balance */
-
-code,
-pre {
-  background: #eee;
-}
-
-code {
-  padding: 2px 4px;
-  vertical-align: text-bottom;
-}
-
-pre {
-  padding: 1em;
-}
-
-/* 06 Primary color */
-
 a {
   color: #e81c4f;
 }
 
-/* 07 Secondary colors */
-
 body {
   background: white;
   color: #566b78;
-}
-
-code,
-pre {
-  background: #f5f7f9;
-  border-bottom: 1px solid #d8dee9;
-  color: #a7adba;
-  -moz-font-smoothing: grayscale;
-  -webkit-font-smoothing: initial;
-}
-
-pre {
-  border-left: 2px solid #69c;
 }
 
 .selector {
