@@ -129,7 +129,7 @@ async def connect(websocket, path):
 
 def main():
     
-    start_server = websockets.serve(connect, 'localhost', 9998)
+    start_server = websockets.serve(connect, None, 9998)
     mux.run_until_complete(start_server)
     mux.run_forever()
 
