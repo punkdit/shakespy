@@ -16,10 +16,12 @@ def input(*args, **kw):
 path = sys.argv[1]
 cmd = sys.argv[2]
 
-os.chdir(path)
+sys.path.insert(0, path)
+
+#os.chdir(path)
 
 #print("run_child: reading %s"%cmd)
-s = open(cmd).read()
+s = open("%s/%s"%(path, cmd)).read()
 
 #print("run_child: exec")
 exec(s, globals(), globals())
