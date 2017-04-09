@@ -1,11 +1,18 @@
 #! /usr/bin/python3
 
+<<<<<<< HEAD
 from __future__ import print_function
 from time import sleep as s
 from random import choice, randint as d
+=======
+import pickle
+from time import sleep as sh
+from random import randint as d, choice
+>>>>>>> 5cd19fdc9aee780d7afe4767c25d344dd14b4077
 from Racer_data import *
 import pickle
 #from ssserve import *
+
 
 
 Heart = True
