@@ -324,8 +324,11 @@ def raceroutine(segments):
         print('\nInto the', segger, 'turn..')
         sh(1.5)
 
+        print('...............')
+        #gap(2)
         for horsey in u.possy:
             print(horsey)
+        gap(2)
         sh(1.5)
 
 
@@ -741,7 +744,7 @@ def bookie(extras=0):
             print('\nWinner!')
             winnings = round(u.ticket[winner] * winner.odds, 2)
             u.money += winnings
-            print('You receive $', winnings + '!')
+            print('You receive $', str(winnings) + '!')
 
         else: print('\nBetter luck tomorrow..')
 
@@ -1088,12 +1091,11 @@ def main(game='load'):
 
     Horse.counter = 0
 
-    u.races = ('\nHow many races, ' + u.name +
-                '? (enter 1-5) \n')
+    u.races = 3 #('\nHow many races, ' + u.name + '? (enter 1-5) \n')
 
-    while u.races not in range(6) or u.races == 0:
-        try: u.races = int(input(u.races))
-        except: continue
+    #while u.races not in range(6) or u.races == 0:
+        #try: u.races = int(input(u.races))
+        #except: continue
 
     print('\nMaximize your window\n')
     u.horses_per = ('Horses per race, ' + u.name +
