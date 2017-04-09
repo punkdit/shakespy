@@ -123,7 +123,7 @@ class Manager(object):
             s = s.replace("\n", "")
             print("Manager.write_to_child: writing %r" % s)
             s = s+"\n"
-            self.queue_write("> "+s) # echo back to client
+            #self.queue_write("> "+s) # echo back to client (Stone doesn't like this...)
             data = s.encode("utf-8") # to binary
             self.child_stdin.write(data)
             self.child_stdin.flush()
