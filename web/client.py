@@ -8,6 +8,10 @@ def put_debug(*info):
     element = document.getElementById('debug')
     #element.innerHTML += ' '.join([str(i)+"<br>" for i in info]) #+ "<br>"
 
+def do_debug(*info):
+    element = document.getElementById('debug')
+    element.innerHTML += ' '.join([str(i)+"<br>" for i in info]) #+ "<br>"
+
 
 message_data = ""
 
@@ -30,8 +34,6 @@ element = document.getElementById('messages')
 element.style.backgroundColor = "lightgrey"
 
 
-#ws = WebSocket("ws://localhost:9998/echo")
-#ws = websocket("ws://localhost:9998/racer")
 ws = websocket("ws://arrowtheory.com:9998/Racer3/Racer.py")
 #ws = websocket("ws://localhost:9998/Racer3/Racer.py")
 
@@ -46,19 +48,38 @@ def onopen():
 
 
 ws.onopen = onopen
+
+CLEAR = "SHAKESPY_CLEAR\n"
+CLOSE = "SHAKESPY_CLOSE\n"
+
+def str_index(data, match):
+    idx = 0
+    n = len(match)
+    while idx+n <= len(data):
+        if data[idx : idx+n] == match:
+            return idx
+        idx += 1
+
                 
 def onmessage(evt):
     put_debug("Message is received:")
     data = evt.data
     put_debug(repr(data))
 
-    if data.strip() == "CLEAR" :
-        clear_message()
-    elif data.strip() == "CLOSE" :
-        #onclose()
+    if CLOSE in data:
+        #do_debug(CLOSE)
         ws.close()
-    else:
-        put_message(evt.data)
+        return
+
+    if CLEAR in data:
+        #do_debug(CLEAR)
+        clear_message()
+        #idx = data.index(CLEAR) # transcrypt FAIL
+        idx = str_index(data, CLEAR)
+        data = data[:idx] + data[idx + len(CLEAR):]
+
+    put_message(data)
+
 
 ws.onmessage = onmessage
 
