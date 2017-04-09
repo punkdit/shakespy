@@ -85,7 +85,16 @@ class Manager(object):
         await self.websocket.send(data)
         print("Manager.write_to_client: exit")
         self.writer = None
-    
+
+    def queue_write(self, line):
+        self.data += line
+        if self.writer is not None:
+            self.writer.cancel()
+        #if self.writer is None:
+        self.writer = asyncio.ensure_future(self.write_to_client())
+        #result = asyncio.ensure_future(self.websocket.send(line))
+        #result.add_done_callback(f)
+
     def read_from_child(self):
         try:
             if self.proc.poll() is None:
@@ -99,14 +108,8 @@ class Manager(object):
                 #if line.endswith("\n"):
                 #    line = line[:-1]
                 #line = self.to_html(line)
-                self.data += line
                 print("Manager.read_from_child: %r"%line)
-                if self.writer is not None:
-                    self.writer.cancel()
-                #if self.writer is None:
-                self.writer = asyncio.ensure_future(self.write_to_client())
-                #result = asyncio.ensure_future(self.websocket.send(line))
-                #result.add_done_callback(f)
+                self.queue_write(line)
             else:
                 print("Manager.read_from_child: child exit")
                 self.cleanup()
@@ -120,7 +123,8 @@ class Manager(object):
             s = s.replace("\n", "")
             print("Manager.write_to_child: writing %r" % s)
             s = s+"\n"
-            data = s.encode("utf-8")
+            #self.queue_write("> "+s) # echo back to client (Stone doesn't like this...)
+            data = s.encode("utf-8") # to binary
             self.child_stdin.write(data)
             self.child_stdin.flush()
         except:
