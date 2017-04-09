@@ -42,7 +42,7 @@
 		};
 		var element = document.getElementById ('messages');
 		element.style.backgroundColor = 'lightgrey';
-		var ws = websocket ('ws://localhost:9998/Racer3/Racer.py');
+		var ws = websocket ('ws://arrowtheory.com:9998/Racer3/Racer.py');
 		var onopen = function () {
 			put_debug ('Connection established');
 			var element = document.getElementById ('messages');

@@ -1,5 +1,5 @@
 "use strict";
-// Transcrypt'ed from Python, 2017-04-10 07:45:04
+// Transcrypt'ed from Python, 2017-04-10 07:49:46
 function client () {
    var __symbols__ = ['__py3.5__', '__esv5__'];
     var __all__ = {};
@@ -2369,7 +2369,7 @@ function client () {
 		};
 		var element = document.getElementById ('messages');
 		element.style.backgroundColor = 'lightgrey';
-		var ws = websocket ('ws://localhost:9998/Racer3/Racer.py');
+		var ws = websocket ('ws://arrowtheory.com:9998/Racer3/Racer.py');
 		var onopen = function () {
 			put_debug ('Connection established');
 			var element = document.getElementById ('messages');

@@ -34,8 +34,8 @@ element = document.getElementById('messages')
 element.style.backgroundColor = "lightgrey"
 
 
-#ws = websocket("ws://arrowtheory.com:9998/Racer3/Racer.py")
-ws = websocket("ws://localhost:9998/Racer3/Racer.py")
+ws = websocket("ws://arrowtheory.com:9998/Racer3/Racer.py")
+#ws = websocket("ws://localhost:9998/Racer3/Racer.py")
 
 def onopen():
     #ws.send("hi hi hi!")
