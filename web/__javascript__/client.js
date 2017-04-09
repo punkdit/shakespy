@@ -1,5 +1,5 @@
 "use strict";
-// Transcrypt'ed from Python, 2017-04-10 07:56:12
+// Transcrypt'ed from Python, 2017-04-10 09:45:27
 function client () {
    var __symbols__ = ['__py3.5__', '__esv5__'];
     var __all__ = {};
@@ -2405,6 +2405,7 @@ function client () {
 				var data = data.__getslice__ (0, idx, 1) + data.__getslice__ (idx + len (CLEAR), null, 1);
 			}
 			put_message (data);
+			window.scrollBy (0, 100);
 		};
 		ws.onmessage = onmessage;
 		var onclose = function () {

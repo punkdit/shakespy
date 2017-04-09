@@ -78,6 +78,7 @@
 				var data = data.__getslice__ (0, idx, 1) + data.__getslice__ (idx + len (CLEAR), null, 1);
 			}
 			put_message (data);
+			window.scrollBy (0, 100);
 		};
 		ws.onmessage = onmessage;
 		var onclose = function () {

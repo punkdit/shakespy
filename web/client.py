@@ -80,6 +80,9 @@ def onmessage(evt):
 
     put_message(data)
 
+    #window.scrollTo(0, 0)
+    window.scrollBy(0, 100)
+
 
 ws.onmessage = onmessage
 
