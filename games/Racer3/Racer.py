@@ -17,7 +17,7 @@ class U(object):
 
         self.D = {}
         self.name = name
-        self.wait = 0.1 #weeeeeee!
+        self.wait = 1
         self.bets = 2
         self.money = 23
         self.day = 0
@@ -179,11 +179,11 @@ def possy(horses):
             if y != x:
                 break
 
-        print(u.possy)
+        #print(u.possy)
 
         u.possy[x], u.possy[y] = u.possy[y], u.possy[x]
 
-        print(u.possy)
+        #print(u.possy)
 
     else:
 
@@ -228,7 +228,7 @@ def possy(horses):
             horse.trackpoints += (horse.strength - strength)
             horse.trackpoints += (horse.speed - speed)
 
-            print(horse.trackpoints)
+            #print(horse.trackpoints)
 
             while True:
                 if horse.trackpoints in shuffler.keys():
@@ -245,7 +245,7 @@ def possy(horses):
 
         for each in shuffler.keys():
             pointlist.append(each)
-        print(pointlist)
+        #print(pointlist)
         pointlist.sort()
 
         for each in pointlist:
@@ -262,11 +262,11 @@ def possy(horses):
             if y != x:
                 break
 
-        print(u.possy)
+        #print(u.possy)
 
         u.possy[x], u.possy[y] = u.possy[y], u.possy[x]
 
-        print(u.possy)
+        #print(u.possy)
 
         diffs(horses)
 
@@ -288,7 +288,10 @@ def diffs(oldpossy):
             print(k, 'drops', str(v)[1:],
             'spots into position', u.possy.index(k)+1)
 
-    input('hmm...')
+    #input('hmm...')
+    print()
+    sh(1.5)
+    print()
 
 
 def raceroutine(segments):
