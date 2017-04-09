@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
-import os, sys
+import os, sys, time
+import traceback
+
 
 _print = print
 def print(*args, **kw):
@@ -24,7 +26,16 @@ sys.path.insert(0, path)
 s = open("%s/%s"%(path, cmd)).read()
 
 #print("run_child: exec")
-exec(s, globals(), globals())
+try:
+    exec(s, globals(), globals())
+except:
+    #print("Exception in user code:")
+    #print("-"*60)
+    traceback.print_exc(file=sys.stdout)
+    #print("-"*60)
+    print()
+    print()
+    time.sleep(1)
 
 
 

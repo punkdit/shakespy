@@ -19,8 +19,9 @@ def popen_child(path):
     open(stem+tail).close() # check file is there
     assert tail.endswith(".py")
     cmd = "./run_child.py %s %s" % (stem, tail)
+    cmd = cmd.split()
     print("popen_child: %r"%cmd)
-    proc = Popen(cmd, shell=True, bufsize=0,
+    proc = Popen(cmd, shell=False, bufsize=0,
           stdin=PIPE, stdout=PIPE, close_fds=True)
 
     return proc
@@ -134,9 +135,11 @@ class Manager(object):
     def cleanup(self):
         print("%s.cleanup" % self)
         if self.running:
+            print("%s.cleanup kill" % self)
             self.proc.kill()
             for i in range(10):
                 self.proc.poll()
+            #self.proc.wait()
             self.running = False
             mux.remove_reader(self.child_stdout.fileno())
         if self.websocket is not None:
