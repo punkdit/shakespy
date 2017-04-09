@@ -3,14 +3,9 @@
 from __future__ import print_function
 from time import sleep as s
 from random import choice, randint as d
-=======
-import pickle
-from time import sleep as sh
-from random import randint as d, choice
 from Racer_data import *
 import pickle
 #from ssserve import *
-
 
 
 Heart = True
