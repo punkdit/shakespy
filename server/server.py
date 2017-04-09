@@ -48,6 +48,7 @@ def rewrite_data(data):
 
 class Manager(object):
 
+    _all = set()
     def __init__(self, path, websocket):
         proc = popen_child(path)
         (child_stdout, child_stdin) = (proc.stdout, proc.stdin)
@@ -60,6 +61,7 @@ class Manager(object):
         self.data = ""
         self.writer = None
         mux.add_reader(child_stdout.fileno(), self.read_from_child)
+        Manager._all.add(self)
         print("%s.__init__ done" % self)
 
     def __str__(self):
@@ -138,6 +140,8 @@ class Manager(object):
             result = asyncio.ensure_future(self.websocket.send("SHAKESPY_CLOSE\n"))
             self.websocket.close()
             self.websocket = None
+        if self in Manager._all:
+            Manager._all.remove(self)
         print("%s.cleanup done" % self)
 
 
@@ -183,9 +187,10 @@ def main():
     try:
         mux.run_forever()
     finally:
+        for manager in list(Manager._all):
+            manager.cleanup()
         mux.close()
-
-    print("server.main: exit")
+        print("server.main: exit")
 
 
 if __name__ == "__main__":
