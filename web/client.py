@@ -31,14 +31,48 @@ def clear_message():
 
 
 element = document.getElementById('messages')
-element.style.backgroundColor = "lightgrey"
+element.style.backgroundColor = "lightgrey" # waiting to connect
 
+
+def str_index(data, match):
+    idx = 0
+    n = len(match)
+    while idx+n <= len(data):
+        if data[idx : idx+n] == match:
+            return idx
+        idx += 1
+    return None
+
+
+def get_params():
+    href = window.location.href
+    #do_debug(href)
+    idx = str_index(href, "?")
+    if idx is None:
+        return {}
+    params = href[idx+1:]
+    #do_debug(params)
+    idx = str_index(params, "=")
+    arg = params[:idx]
+    value = params[idx+1:]
+    data = {arg : value}
+    #do_debug(data)
+    return data
+
+                
 host = window.location.hostname
-do_debug("host", len(host), "thats it")
-addr = "ws://{}:9998/Racer3/Racer.py".format(host)
+if len(host)==0:
+    host = "localhost"
+#do_debug("host", len(host), "thats it")
+
+params = get_params()
+game = params.get("game")
+game = game.replace("%2F", "/")
+#do_debug("here:", game)
+
+addr = "ws://{}:9998/{}".format(host, game)
 ws = websocket(addr)
-#ws = websocket("ws://arrowtheory.com:9998/Racer3/Racer.py")
-#ws = websocket("ws://localhost:9998/Racer3/Racer.py")
+
 
 def onopen():
     #ws.send("hi hi hi!")
@@ -55,15 +89,6 @@ ws.onopen = onopen
 CLEAR = "SHAKESPY_CLEAR\n"
 CLOSE = "SHAKESPY_CLOSE\n"
 
-def str_index(data, match):
-    idx = 0
-    n = len(match)
-    while idx+n <= len(data):
-        if data[idx : idx+n] == match:
-            return idx
-        idx += 1
-
-                
 def onmessage(evt):
     put_debug("Message is received:")
     data = evt.data

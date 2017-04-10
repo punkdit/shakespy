@@ -42,9 +42,38 @@
 		};
 		var element = document.getElementById ('messages');
 		element.style.backgroundColor = 'lightgrey';
+		var str_index = function (data, match) {
+			var idx = 0;
+			var n = len (match);
+			while (idx + n <= len (data)) {
+				if (data.__getslice__ (idx, idx + n, 1) == match) {
+					return idx;
+				}
+				idx++;
+			}
+			return null;
+		};
+		var get_params = function () {
+			var href = window.location.href;
+			var idx = str_index (href, '?');
+			if (idx === null) {
+				return dict ({});
+			}
+			var params = href.__getslice__ (idx + 1, null, 1);
+			var idx = str_index (params, '=');
+			var arg = params.__getslice__ (0, idx, 1);
+			var value = params.__getslice__ (idx + 1, null, 1);
+			var data = dict ([[arg, value]]);
+			return data;
+		};
 		var host = window.location.hostname;
-		do_debug ('host', len (host), 'thats it');
-		var addr = 'ws://{}:9998/Racer3/Racer.py'.format (host);
+		if (len (host) == 0) {
+			var host = 'localhost';
+		}
+		var params = get_params ();
+		var game = params.py_get ('game');
+		var game = game.py_replace ('%2F', '/');
+		var addr = 'ws://{}:9998/{}'.format (host, game);
 		var ws = websocket (addr);
 		var onopen = function () {
 			put_debug ('Connection established');
@@ -57,16 +86,6 @@
 		ws.onopen = onopen;
 		var CLEAR = 'SHAKESPY_CLEAR\n';
 		var CLOSE = 'SHAKESPY_CLOSE\n';
-		var str_index = function (data, match) {
-			var idx = 0;
-			var n = len (match);
-			while (idx + n <= len (data)) {
-				if (data.__getslice__ (idx, idx + n, 1) == match) {
-					return idx;
-				}
-				idx++;
-			}
-		};
 		var onmessage = function (evt) {
 			put_debug ('Message is received:');
 			var data = evt.data;
@@ -113,6 +132,8 @@
 			__all__.clear_message = clear_message;
 			__all__.do_debug = do_debug;
 			__all__.element = element;
+			__all__.game = game;
+			__all__.get_params = get_params;
 			__all__.host = host;
 			__all__.message_data = message_data;
 			__all__.onclick = onclick;
@@ -120,6 +141,7 @@
 			__all__.onkeydown = onkeydown;
 			__all__.onmessage = onmessage;
 			__all__.onopen = onopen;
+			__all__.params = params;
 			__all__.put_debug = put_debug;
 			__all__.put_message = put_message;
 			__all__.status = status;
