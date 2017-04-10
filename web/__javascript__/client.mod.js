@@ -42,7 +42,10 @@
 		};
 		var element = document.getElementById ('messages');
 		element.style.backgroundColor = 'lightgrey';
-		var ws = websocket ('ws://arrowtheory.com:9998/Racer3/Racer.py');
+		var host = window.location.hostname;
+		do_debug ('host', len (host), 'thats it');
+		var addr = 'ws://{}:9998/Racer3/Racer.py'.format (host);
+		var ws = websocket (addr);
 		var onopen = function () {
 			put_debug ('Connection established');
 			var element = document.getElementById ('messages');
@@ -105,10 +108,12 @@
 		__pragma__ ('<all>')
 			__all__.CLEAR = CLEAR;
 			__all__.CLOSE = CLOSE;
+			__all__.addr = addr;
 			__all__.button = button;
 			__all__.clear_message = clear_message;
 			__all__.do_debug = do_debug;
 			__all__.element = element;
+			__all__.host = host;
 			__all__.message_data = message_data;
 			__all__.onclick = onclick;
 			__all__.onclose = onclose;

@@ -33,8 +33,11 @@ def clear_message():
 element = document.getElementById('messages')
 element.style.backgroundColor = "lightgrey"
 
-
-ws = websocket("ws://arrowtheory.com:9998/Racer3/Racer.py")
+host = window.location.hostname
+do_debug("host", len(host), "thats it")
+addr = "ws://{}:9998/Racer3/Racer.py".format(host)
+ws = websocket(addr)
+#ws = websocket("ws://arrowtheory.com:9998/Racer3/Racer.py")
 #ws = websocket("ws://localhost:9998/Racer3/Racer.py")
 
 def onopen():
