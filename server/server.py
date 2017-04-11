@@ -6,18 +6,35 @@ from subprocess import Popen, PIPE
 import asyncio
 import websockets
 import re
+import traceback
 
 
 mux = asyncio.get_event_loop()
 
+def get_all_games():
+    games = []
+    for root, dirs, names in os.walk("../games"):
+        for name in names:
+            if name.endswith(".py"):
+                games.append("%s/%s"%(root, name))
+    return games
+
+
 def popen_child(path):
+    all_games = get_all_games()
     assert path.count('/') >= 2
+    assert path.startswith('/')
+    path = path[1:]
+    assert " " not in path
+    assert ".." not in path
     items = path.split('/')
     stem = '/'.join(items[:-1]) # working directory
     stem = "../games/%s/"%stem
     tail = items[-1] # command to run
-    open(stem+tail).close() # check file is there
     assert tail.endswith(".py")
+    name = stem+tail
+    assert name in all_games, "%r not found in %s" % (name, all_games)
+    #open(name).close() # check file is there
     cmd = "./run_child.py %s %s" % (stem, tail)
     cmd = cmd.split()
     print("popen_child: %r"%cmd)
@@ -50,9 +67,8 @@ def rewrite_data(data):
 class Manager(object):
 
     _all = set()
-    def __init__(self, path, websocket):
-        proc = popen_child(path)
-        (child_stdout, child_stdin) = (proc.stdout, proc.stdin)
+    def __init__(self, path, proc, websocket):
+        child_stdout, child_stdin = proc.stdout, proc.stdin
         self.path = path
         self.proc = proc
         self.child_stdout = child_stdout
@@ -165,7 +181,15 @@ def test():
 async def connect(websocket, path):
 
     print("server.connect path=%r"%path)
-    manager = Manager(path, websocket)
+
+    try:
+        proc = popen_child(path)
+    except:
+        await websocket.send("game %r failed to load"%path)
+        traceback.print_exc(file=sys.stdout)
+        return
+
+    manager = Manager(path, proc, websocket)
 
     try:
       while manager.running:
