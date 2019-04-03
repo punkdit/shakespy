@@ -103,7 +103,7 @@ class Horse:
                 if self.speed < 111:
                     self.speed += 1
 
-        self.rank -= amount // 2
+        self.rank -= (amount + 1) // 2
 
         if self.rank < 1: self.rank = 1
         if self.rank == 1:
