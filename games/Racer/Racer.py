@@ -76,8 +76,7 @@ class Horse:
         self.strength = d(70, 90)
         self.speed = d(50, 80)
         self.rank = 171 - self.speed - self.strength
-        self.secret = (self.weakness % 4) + 2
-        if self.secret == 5: self.secret = 1
+        self.secret = (self.weakness + 2) % 4
         self.runs, self.wins = 0, 0
         self.stars, self.trackpoints = 0, 0
         self.badges = []
@@ -104,7 +103,7 @@ class Horse:
                 if self.speed < 111:
                     self.speed += 1
 
-        self.rank -= amount / 2
+        self.rank -= amount // 2
 
         if self.rank < 1: self.rank = 1
         if self.rank == 1:
@@ -486,13 +485,11 @@ def shuffle():
 
         points += horse.trackpoints * 0.23
 
-        while True:
-            if points in shuffler:
-                if d(0, 2) != 1:
-                    points += 0.01
-                else:
-                    points -= 0.01
-            else: break
+        while points in shuffler:
+            if d(0, 1) :
+                points += 0.01
+            else:
+                points -= 0.01
 
         shuffler[points] = horse
 
@@ -760,7 +757,6 @@ def clues(five):
     word += letter
     word = word[::-1]
     wordtoyomama = 'word'
-    if word: del wordtoyomama
     spy = get(word)
     return spy[five]
 
@@ -794,8 +790,7 @@ def clue():
 
         if u.ends < 3:
             flag('garden')
-            something = sumting(something)
-            return something
+            return  sumting(something)
 
         elif u.money < 2350:
             flag('garden')
@@ -812,7 +807,7 @@ def clue():
 
     if not u.meetnext and u.met == 0:  # no more unmet peeps, all done
         # if not u.meetnext instead of if len(u.meetnext) == 0
-        u.clued == 2
+        u.clued = 2
         u.met = 2
         flag('options')
         flag('garden')
@@ -850,7 +845,7 @@ def clue():
         silver = input('\nSolve the clue? y/n -> ')
         if 'y' in silver.lower():
             if d(1, 3) == 1:
-                u.clued == 1
+                u.clued = 1
                 u.clues += 1
                 u.met = 0
                 u.bag['clues'] = 0
