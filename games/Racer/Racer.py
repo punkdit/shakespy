@@ -315,7 +315,7 @@ def bye():
     sh(1); print('\n  and these last', u.day, 'days of the groundhog grind..')
     sh(2); print('\n it\'s time to move on..'); sh(3)
     sh(1); print('\n   and be..'); sh(3)
-    print('\n\n                      0 ! !Happy Happy Ever After! ! 0')
+    print('\n\n              !0! ! !Happy Happy Ever After! ! !0!')
     sh(5)
     print('\n\namazing game...')
     sh(5)
@@ -486,7 +486,7 @@ def shuffle():
         points += horse.trackpoints * 0.23
 
         while points in shuffler:
-            if d(0, 1) :
+            if d(0, 1):
                 points += 0.01
             else:
                 points -= 0.01
@@ -790,7 +790,7 @@ def clue():
 
         if u.ends < 3:
             flag('garden')
-            return  sumting(something)
+            return sumting(something)
 
         elif u.money < 2350:
             flag('garden')
@@ -798,12 +798,10 @@ def clue():
             u.nexts = 2
             return something
 
-        else:
-            u.bye = 1
-            something = ('\nThere is a limo standing by' +
-                         ' the garden entrance.\n  The passenger window ' +
-                         'slides down\n\nMay Lee gestures\n\n"It is time.\n\n')
-            return something
+        u.bye = 1
+        return ('\nThere is a limo standing by the garden entrance.' +
+            '\nThe passenger window slides down' + '\nMay Lee gestures'
+            + '\nIt is time.')
 
     if not u.meetnext and u.met == 0:  # no more unmet peeps, all done
         # if not u.meetnext instead of if len(u.meetnext) == 0
@@ -830,6 +828,7 @@ def clue():
         print("    {} says: I have a clue for you".format(they))
         sh(2)
         print('\n              My name is', u.someone)
+        sh(1.5)
         print("            Come see me when you're ready")
         u.bag['clues'] = 1
     else:
@@ -914,7 +913,11 @@ def garden():
     if u.met == 2 and u.bye != 1:
         if u.nexts > 2:
             something = clue()
-            sh(1.5); print(something); sh(3)
+            sh(1.5)
+            for line in something.splitlines():
+                sh(1.5)
+                print('\n'+line)
+            sh(3)
         else:
             print('\n  You feel a presence here.'); sh(1.5)
             print(choice(['  .. there is a sweet flower smell ..\n',
@@ -1114,7 +1117,8 @@ def sumting(something):
     if 'n' in gong.lower():
         return something
 
-    something = ('\n   Look out for me, ' + u.name +
+    something = ('\nMuch good. Time for prepare.' +
+                 '\n   Look out for me, ' + u.name +
                  '. I will come for you soon. \n\n' +
                  'You will need about $2350\n  ')
     flag('garden')
