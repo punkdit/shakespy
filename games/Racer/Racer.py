@@ -12,6 +12,7 @@ from random import randint as d, choice
 from horse import Horse
 from player import U
 
+
 __version__ = '0.1.23.3' #shakespy
 os.chdir('../games/Racer')
 
