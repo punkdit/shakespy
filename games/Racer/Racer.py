@@ -1074,23 +1074,18 @@ def bio(lane):
 def choosehorses(numhorses):
     '''make a list of random horses for the game'''
 
-    print('enter choosehorses')
     gamehorses = []
     file = 'horselist.dat'
     wholelist = get(file)
-    print('wholelist got file')
-    print(wholelist)
 
-    print(len(gamehorses), numhorses)
     while len(gamehorses) < numhorses:
 
         randhorse = choice(wholelist).strip()
 
-        if randhorse in gamehorses: quit()
+        if randhorse in gamehorses: continue
 
         gamehorses.append(randhorse)
 
-    print('returning gamehorses')
     return gamehorses
 
 
