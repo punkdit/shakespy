@@ -101,6 +101,8 @@ def switch():
         break
 
     u.possy[m], u.possy[a] = u.possy[a], u.possy[m]
+
+
 def startrace(horses):
     sortpossy = {}
     u.possy = []
@@ -278,6 +280,7 @@ def startnhalf():
 
     sh(2.5); clr(3)
 
+
 def laneresistance(horse, lane):
     return(
         u.horses_per - lane < 2 and horse.weakness == 4 or
@@ -287,6 +290,7 @@ def laneresistance(horse, lane):
 
 def veryhot(horse):
     return horse.weakness == 1 and u.weather['temp'] > 33
+
 
 def hot(horse):
     return horse.weakness == 1 and u.weather['temp'] > 26
