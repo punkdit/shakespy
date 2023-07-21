@@ -4,127 +4,28 @@
 (c)2017->
 stOneskull'''
 
-
+import os
 import pickle
 from time import sleep as pause
 from random import randint as d, choice
+
+from horse import Horse
+from player import U
+
+__version__ = '0.1.23.3' #shakespy
+os.chdir('../games/Racer')
 
 
 Heart = True
 
 
-class U:
-    '''the player'''
-
-    def __init__(self, playername):
-
-        self.name = playername
-
-        self.D = {}         # dict of horsenum: horseinstance
-        self.lanes = {}     # dict of lanenum: horseinstance
-        self.racing = {}    # dict of lanenum: horsenum
-
-        self.gamehorses = []    # list of horses in game
-        self.possy = []         # list of racers in order of race position
-
-        self.wait = 1       # 1 is normal speed or 0.5 is double speed
-        self.money = 23     # starting dollars
-        self.bets = 2
-
-        self.numhorses, self.horses_per = 0, 0
-        self.day, self.laps, self.betyet = 0, 0, 0
-        self.clued, self.seggy, self.clues = 0, 0, 0
-        self.met, self.bye, self.nexts = 0, 0, 0
-        self.checker, self.ends, self.loadnum = 0, 0, 0
-
-        self.horse_multi = 3 # multiplyer (* horses_per) for total horses
-
-        self.doors = {
-            1: 'bag', 2: 'guide', 3: 'bookie',
-            4: 'garden', 5: 'track', 6: 'sleep',
-            9: 'options'}
-        self.flags = {
-            'guide': 1, 'bookie': 1, 'garden': 0,
-            'track': 0, 'sleep': 1, 'options': 1}
-        self.meet = {
-            1: ['May Lee', 0], 2: ['Wong', 0],
-            3: ['Travis', 0], 4: ['Pauly', 0],
-            5: ['Chang', 0]}
-        self.bag = {
-            'pillow': 1, 'comb': 1}
-
-        self.someone = 'Hmm'
-        self.meetnext = []
-        self.ticket = {}
-        self.weather = nature()
-        self.today = 'Now'
-
-
-
-class Horse:
-    '''to make each horse an object'''
-
-    counter = 0
-
-    weaknesses = {1: 'hot', 2: 'wet', 3: 'inside', 4: 'outside'}
-
-    def __init__(self, name):
-        Horse.counter += 1
-        self.number = Horse.counter
-        self.name = name
-        self.weakness = d(1, 4)
-        self.strength = d(70, 90)
-        self.speed = d(50, 80)
-        self.rank = 171 - self.speed - self.strength
-        self.secret = (self.weakness + 2) % 4
-        if not self.secret: self.secret = 4
-        self.runs, self.wins = 0, 0
-        self.stars, self.trackpoints = 0, 0
-        self.badges = []
-
-    def __repr__(self):
-        return self.name
-
-    def rise(self, value, amount):
-        '''change speed or strength or both at once'''
-
-        if value in ['sp', 'speed', 'both']:
-            self.speed += amount
-            if self.speed >= 123:
-                if self.wins > 0:
-                    self.star('Rocket')
-                if self.strength < 100:
-                    self.strength += 1
-
-        if value in ['str', 'strength', 'both']:
-            self.strength += amount
-            if self.strength >= 132:
-                if self.wins > 0:
-                    self.star('Rock')
-                if self.speed < 111:
-                    self.speed += 1
-
-        self.rank -= (amount + 1) // 2
-
-        if self.rank < 1: self.rank = 1
-        if self.rank == 1:
-            self.star('Rank 1')
-
-    def star(self, badge):
-        '''add achievement badge to horse'''
-        if badge not in self.badges:
-            self.badges.append(badge)
-            self.stars += 1
-
-
-
 def clr(lines=99):
-    '''print amount of lines, default is 99 to clear console'''
+    '''print new lines'''
     print('\n' * lines)
 
 
 def sh(secs):
-    '''pause in seconds multiplied by wait attribute'''
+    '''pause by wait'''
     pause(secs * u.wait)
 
 
@@ -151,13 +52,12 @@ def saybag():
     clr()
     print("\n        You own..\n")
 
-    for k, v in u.bag.items():
-        if v < 1: continue
-        if v == 1: v = " "
-        else: v = "(" + str(v) + ")"
-        print('                ', k, v)
+    for thing, amount in u.bag.items():
+        if amount < 1: continue
+        amount = '' if amount == 1 else f'({amount})'
+        print('                ', thing, amount)
     print('                              ',
-          'and $' + str(format(u.money, '0.2f')), 'cash')
+          f'and ${u.money:.2f} cash')
 
     return menu
 
@@ -201,6 +101,47 @@ def switch():
         break
 
     u.possy[m], u.possy[a] = u.possy[a], u.possy[m]
+def startrace(horses):
+    sortpossy = {}
+    u.possy = []
+
+    for horse in horses:
+
+        oddmeter = horse.odds
+
+        while oddmeter in sortpossy:
+            oddmeter += 0.001
+
+        sortpossy[oddmeter] = horse
+
+    oddslist = sorted(sortpossy)
+
+    u.possy.extend(sortpossy[oddz] for oddz in oddslist)
+
+    switch()
+    switch()
+    switch()
+
+    sh(2)
+    clr(3)
+
+    print()
+    sh(1.5)
+    print()
+    print('A', u.weather['feel'], u.today, 'afternoon at the races!')
+    sh(2)
+    clr()
+    sh(1.5)
+    print('\n\n     The horses shake their legs..')
+    sh(1.5)
+    print('\n         and begin their equine dance')
+    sh(1.5)
+    print('\n             across the', u.weather['dirt'], 'track..\n\n')
+
+    sh(2.3)
+    clr()
+    print('Out of the gate..')
+    sh(2.3)
 
 
 def possy(horses, halt=0):
@@ -209,63 +150,15 @@ def possy(horses, halt=0):
 
     if u.seggy == 1:  #  if start of race
 
-        sortpossy = {}
-        u.possy = []
-        oddslist = []
-
-        for horse in horses:
-
-            oddmeter = horse.odds
-
-            while True:
-                if oddmeter in sortpossy:
-                    if d(1, 3) != 1:
-                        oddmeter += 0.001
-                    else: oddmeter -= 0.001
-                else: break
-
-            sortpossy[oddmeter] = horse
-
-        for each in sortpossy:
-            oddslist.append(each)
-
-        oddslist.sort()
-
-        for oddz in oddslist:
-            u.possy.append(sortpossy[oddz])
-
-        switch(); switch(); switch()
-
-        sh(2); clr(3)
-
-        print(); sh(1.5); print()
-        print('A', u.weather['feel'], u.today, 'afternoon at the races!')
-        sh(2); clr(); sh(1.5)
-        print('\n\n     The horses shake their legs..')
-        sh(1.5)
-        print('\n         and begin their equine dance')
-        sh(1.5)
-        print('\n             across the', u.weather['dirt'], 'track..\n\n')
-
-        sh(2.3)
-        clr()
-        print('Out of the gate..')
-        sh(2.3)
-
+        startrace(horses)
     else:
         shuffler = shuffle()
 
         u.possy = []
-        pointlist = []
-
-        for each in shuffler:
-            pointlist.append(each)
-
-        pointlist.sort()
+        pointlist = sorted(shuffler)
         pointlist.reverse()
 
-        for each in pointlist:
-            u.possy.append(shuffler[each])
+        u.possy.extend(shuffler[each] for each in pointlist)
 
         switch()
 
@@ -277,16 +170,11 @@ def diffs(oldpossy):
     '''working out the difference of horse position
     between race legs for commentating'''
 
-    diffsdict = {}
-
-    # in order of the new horse positions,
-    # work out how many positions have been moved in the new race leg
-    # for each horse - it - and put in diffs dict
-    # if in same position it is skipped from the diffs dict
-
-    for pos, it in enumerate(u.possy):
-        if it != oldpossy[pos]:
-            diffsdict[it] = oldpossy.index(it) - pos
+    diffsdict = {
+        horse: oldpossy.index(horse) - position
+        for position, horse in enumerate(u.possy)
+        if horse != oldpossy[position]
+    }
 
     # change is the old position in the possy minus the new position
     # third place to fifth would be change of minus two
@@ -297,11 +185,9 @@ def diffs(oldpossy):
     # after commenting changes then display all current positions
 
     print(); sh(1.5); print()
-    for booger, horsey in enumerate(u.possy):
-        print(str(booger + 1) + ':', horsey, end=" ")
-        if horsey in u.ticket:
-            print(' <-- your horse')
-        else: print(' ')
+    for position, horsey in enumerate(u.possy):
+        print(f'{position + 1}: {horsey}', end=" ")
+        print(' <-- your horse') if horsey in u.ticket else print()
     sh(1); print()
     print(); sh(2.3); print()
 
@@ -339,7 +225,7 @@ def odds(horse):
     theodds *= changer
 
     horse.odds = theodds
-    horse.oddstring = str(format(round(theodds, 1), '05.2f'))
+    horse.oddstring = f'{round(theodds, 1):05.2f}'
 
 
 def startnhalf():
@@ -357,16 +243,16 @@ def startnhalf():
             slip = d(1, 3)
             if slip == 1:
                 if u.seggy == 1:
-                    print('\n  ', start, 'has a tops start..')
+                    print(f'\n   {start} has a tops start..')
                 else:
-                    print('\n  ', start, 'is in the lead..')
+                    print(f'\n   {start} is in the lead..')
             elif slip == 2:
                 if u.seggy == 1:
-                    print('\n  ', start, 'has an ace start..')
+                    print(f'\n   {start} has an ace start..')
                 else:
-                    print('\n  ', start, 'is leading the pack..')
+                    print(f'\n   {start} is leading the pack..')
             else:
-                print('\n  out in front it\'s', start)
+                print(f"\n  out in front it's {start}")
 
         elif i == 1:
             slop = d(1, 3)
@@ -384,14 +270,26 @@ def startnhalf():
             elif slap == 3: print('   and in last.. it\'s', start)
             else: print('   with', start, 'in the rear')
 
-        else:
-            if d(1, 2) == 1: print(' followed by', start)
-            elif d(1, 2) == 1: print(' and then', start)
-            else: print(' then it\'s', start)
+        elif d(1, 2) == 1: print(' followed by', start)
+        elif d(1, 2) == 1: print(' and then', start)
+        else: print(' then it\'s', start)
 
         sh(1.8)
 
     sh(2.5); clr(3)
+
+def laneresistance(horse, lane):
+    return(
+        u.horses_per - lane < 2 and horse.weakness == 4 or
+        lane < 3 and horse.weakness == 3
+    )
+
+
+def veryhot(horse):
+    return horse.weakness == 1 and u.weather['temp'] > 33
+
+def hot(horse):
+    return horse.weakness == 1 and u.weather['temp'] > 26
 
 
 def shuffle():
@@ -405,18 +303,17 @@ def shuffle():
         strength = horse.strength
         speed = horse.speed
 
-        if (u.horses_per - lane < 2 and horse.weakness == 4) \
-               or (lane < 3 and horse.weakness == 3):
+        if laneresistance(horse, lane):
             if d(0, 1) == 1:
                 horse.rise('speed', 0 - d(2, 4))
             else: horse.rise('speed', d(-2, 0))
 
-        elif horse.weakness == 1 and u.weather['temp'] > 33:
+        elif veryhot(horse):
             if d(0, 1) == 1:
                 horse.rise('str', 0 - d(2, 4))
             else: horse.rise('both', d(-2, 0))
 
-        elif horse.weakness == 1 and u.weather['temp'] > 26:
+        elif hot(horse):
             if d(0, 1) == 1:
                 horse.rise('both', 0 - d(1, 2))
             else: horse.rise('both', d(0, 1))
@@ -501,11 +398,9 @@ def raceroutine(segments):
     '''take in race legs and direct each leg accordingly'''
 
     for segment in range(segments):
-        u.seggy = segment + 1  # zero indexed so add one, call it seggy
+        u.seggy = segment + 1
 
         clr()
-
-    # segger is the text of the segment
 
         if u.seggy == segments:
             segger = 'last'
@@ -524,14 +419,14 @@ def raceroutine(segments):
         elif u.seggy == segments:  # if last leg
             possy(u.possy, halt=1)
 
+        elif u.seggy == 5:  # if into a second lap
+            startnhalf()
+
         else:
-            if u.seggy == 5:  # if into a second lap
-                startnhalf()
-            else:
-                possy(u.possy)
+            possy(u.possy)
 
         if u.seggy <= segments:
-            print('\n    Into the', segger, 'turn..')
+            print(f'\n    Into the {segger} turn..')
             sh(1)
             print(' ~-------------------------~\n')
             sh(2)
@@ -546,20 +441,22 @@ def raceroutine(segments):
             print('\nOh ho ho..')
             print('  The final leg..')
             print(); sh(2)
-            print('\nIn front is', u.possy[0])
+            print(f'\nIn front is {u.possy[0]}')
             sh(1)
-            print('\n     In second it\'s', u.possy[1])
+            print(f"\n     In second it's {u.possy[1]}")
             sh(1)
-            print('\n          In third is', u.possy[2])
+            print(f'\n          In third is {u.possy[2]}')
             sh(2.3)
             possy(u.possy, halt=1)
 
             clr()
             print('\nComing in toward the finish line..')
             sh(1.5)
-            print("\n   it's {}..".format(u.possy[0])); sh(1.2)
-            print("\n         just in front of {}..".format(u.possy[1]))
-            sh(1.2); print('\n     with {} just behind them'.format(u.possy[2]))
+            print(f"\n   it's {u.possy[0]}..")
+            sh(1.2)
+            print(f"\n         just in front of {u.possy[1]}..")
+            sh(1.2)
+            print(f'\n     with {u.possy[2]} just behind them')
             sh(3)
             clr()
             print('\nThe horses pass the post..')
@@ -568,20 +465,14 @@ def raceroutine(segments):
             sh(2)
             possy(u.possy, halt=1)
 
-            for booger, horsey in enumerate(u.possy):
-
+            for position, horsey in enumerate(u.possy):
                 horsey.runs += 1
 
-                if booger == 0:
-                    print('\n\nWinner is', horsey, end="")
-                    print('!\n')
+                if position == 0:
+                    print(f'\n\nWinner is {horsey}!\n')
                     sh(3)
-                    print('1:', horsey, end=" ")
-                else:
-                    print(str(booger + 1) + ':', horsey, end=" ")
-                if horsey in u.ticket:
-                    print(' <-- your horse')
-                else: print(' ')
+                print(f'{position + 1}: {horsey}', end=" ")
+                print(' <-- your horse') if horsey in u.ticket else print()
                 sh(1)
 
         clr(2)
@@ -592,8 +483,7 @@ def updown(diffsdict):
     '''horse and the position changed put into the commentary'''
 
     for h, v in diffsdict.items():
-        if v == 1 or v == -1: s = 'spot'
-        else: s = 'spots'
+        s = 'spot' if v in (-1, 1) else 'spots'
 
         if v > 4: m = 'leaps'
         elif v > 2: m = 'jumps'
@@ -601,7 +491,6 @@ def updown(diffsdict):
         elif v < -2: m = 'slips'
         else: m = 'moves'
 
-        # zero indexed so add one
         e = u.possy.index(h) + 1
         if e < 4:
             if e == 1: r = 'into first'
@@ -625,19 +514,38 @@ def updown(diffsdict):
         sh(1.4)
 
 
+def hothorse(horse):
+    horse.rise('both', -3)
+
+    if d(0, 1) == 1:
+        print('        There is a little delay..',
+                horse, 'looks a little weak..')
+        horse.rise('both', -2)
+        sh(d(3, 5))
+
+
+def resistance(horse):
+    horse.rise('speed', -3)
+
+    if d(0, 1) == 1:
+        print('        There is a little delay as',
+                horse, 'resists')
+        horse.rise('both', -2)
+        sh(d(3, 5))
+
+
 def race():
     '''at the track and the race is about to begin'''
 
     clr()
 
-    print('On this', u.weather['feel'] +
-          ',', u.weather['sky'], u.today + '...')
-    print('We have', u.horses_per, 'racers.')
+    print(f'On this {u.weather["feel"]}, {u.weather["sky"]} {u.today}...')
+    print(f'We have {u.horses_per} racers.')
 
     for horse, thebet in u.ticket.items():
         money = 'bucks'
         if thebet == 1: money = 'dollar'
-        print('\nYou have', thebet, money, 'bet on', horse)
+        print(f'\nYou have {thebet} {money} bet on {horse}')
 
     input('\nReady? \n')
 
@@ -651,27 +559,16 @@ def race():
 
     for lane, horse in u.lanes.items():
 
-        print('\n  ', horse, 'enters stall', lane)
+        print(f'\n  {horse} enters stall {lane}')
         sh(1.5)
 
         if (u.horses_per - lane < 2 and horse.weakness == 4) \
            or (lane < 3 and horse.weakness == 3):
-            horse.rise('speed', -3)
-
-            if d(0, 1) == 1:
-                print('        There is a little delay as',
-                      horse, 'resists')
-                horse.rise('both', -2)
-                sh(d(3, 5))
+            resistance(horse)
 
         elif horse.weakness == 1 and u.weather['temp'] > 26:
-            horse.rise('both', -3)
+            hothorse(horse)
 
-            if d(0, 1) == 1:
-                print('        There is a little delay..',
-                      horse, 'looks a little weak..')
-                horse.rise('both', -2)
-                sh(d(3, 5))
 
         elif horse.weakness == 2 and u.weather['dirt'] == 'wet':
             horse.rise('str', -3)
@@ -719,8 +616,8 @@ def sleep():
         print('\n' * d(0, 1))
 
     for theflag in u.flags: u.flags[theflag] = 0
-    u.flags['guide'] = 1
-    u.flags['bookie'] = 1
+    flag('guide')
+    flag('bookie')
 
     return game
 
@@ -736,10 +633,9 @@ def track():
         print('    track:', u.weather['dirt'])
         print('    weather:', u.weather['feel'], '&', u.weather['sky'])
         flag('track')  # track now closes until bet made
-        if u.laps == 1: laps = 'lap'
-        else: laps = 'laps'
-        print('\ntoday,', u.today.lower() +
-              ': there will be', u.laps, laps, 'of the track for the race')
+        laps = 'lap' if u.laps == 1 else 'laps'
+        print(f'\ntoday, {u.today.lower()}:')
+        print(f'there will be {u.laps} {laps} of the track for the race')
         return menu
 
     race()
@@ -754,7 +650,7 @@ def track():
 def clues(five):
     '''fivespys'''
     letter = 'tad'
-    word = letter + '.'
+    word = f'{letter}.'
     word += letter
     word = word[::-1]
     wordtoyomama = 'word'
@@ -773,19 +669,12 @@ def clue():
         u.met = 0
 
     if u.met == 0:
-        u.meetnext = []
-
-        for person in u.meet:
-            if u.meet[person][1] == 0:
-                u.meetnext.append(person)
-
-    if u.someone == 'May Lee': they = 'She'
-    else: they = 'He'
-
-    if u.met == 0:
+        u.meetnext = [person for person in u.meet if u.meet[person][1] == 0]
         they = 'The person'
         someone = 'a person'
-    else: someone = u.someone
+    else:
+        someone = u.someone
+        they = 'She' if someone == 'May Lee' else 'He'
 
     if u.nexts > 2:
 
@@ -805,13 +694,11 @@ def clue():
             + '\nIt is time.')
 
     if not u.meetnext and u.met == 0:  # no more unmet peeps, all done
-        # if not u.meetnext instead of if len(u.meetnext) == 0
         u.clued = 2
         u.met = 2
         flag('options')
         flag('garden')
         return something
-
     elif u.met == 0:
         meeter = choice(u.meetnext)
         u.meetnext.remove(meeter)
@@ -820,22 +707,17 @@ def clue():
         u.met = 1
 
     sh(2)
-    print('''
-    You see {0} sitting on a wooden bench.
-         {1} gestures. You approach.'''.format(someone, they))
+    print(f'''
+    You see {someone} sitting on a wooden bench.
+         {they} gestures. You approach.''')
     sh(2)
 
     if someone == 'a person':
-        print("    {} says: I have a clue for you".format(they))
-        sh(2)
-        print('\n              My name is', u.someone)
-        sh(1.5)
-        print("            Come see me when you're ready")
-        u.bag['clues'] = 1
+        sayhi(they)
     else:
         sh(2)
-        print('\n     {} asks: '.format(they) +
-              'Have you got the answer yet?')
+        print(f'''\n     {they} asks: 
+              Have you got the answer yet?''')
 
     something = '\nYou keep the clue in your pocket..\n'
 
@@ -843,24 +725,35 @@ def clue():
 
     if d(1, 3) != 3:
         silver = input('\nSolve the clue? y/n -> ')
-        if 'y' in silver.lower():
+        if 'n' not in silver.lower():
             if d(1, 3) == 1:
-                u.clued = 1
-                u.clues += 1
-                u.met = 0
-                u.bag['clues'] = 0
-                something = "\nCool bananas!\n"
-                sh(1)
-                print(clues(u.clues))
-                sh(2)
+                something = gotcha()
             else:
                 print('            no. not this time..')
-                sh(2)
+            sh(2)
 
     flag('options')
     flag('garden')
-
     return something
+
+
+def gotcha():
+    u.clued = 1
+    u.clues += 1
+    u.met = 0
+    u.bag['clues'] = 0
+    sh(1)
+    print(clues(u.clues))
+    return "\nCool bananas!\n"
+
+
+def sayhi(they):
+    print(f"    {they} says: I have a clue for you")
+    sh(2)
+    print(f'\n              My name is {u.someone}')
+    sh(1.5)
+    print("            Come see me when you're ready")
+    u.bag['clues'] = 1
 
 
 def garden():
@@ -933,9 +826,7 @@ def garden():
         something = clue()
         sh(1.5); print(something); sh(3)
 
-    if u.bye == 1: return bye
-
-    return menu
+    return bye if u.bye == 1 else menu
 
 
 def guide():
@@ -950,9 +841,14 @@ def guide():
     for lane in u.lanes:
         pony = u.lanes[lane]
 
-        print('Lane %02d -' % lane, '[' + pony.oddstring + ']',
-              '<' + str(format(pony.number, '02d')) + '>',
-              pony.name, pony.notice)
+        theodds = pony.oddstring
+        ponynum = f'{pony.number:02d}'
+        name = pony.name
+        note = pony.notice
+
+        print(
+            f'Lane {lane:02d} - [{theodds}] <{ponynum}> {name} {note}'
+        )
 
     lane = 23
 
@@ -992,15 +888,13 @@ def bet(lane):
 
     while True:
 
-        print('\nYou are betting on %s' % horse.name)
-
+        print('\nYou are betting on %s' % horse)
         print('Enter 0 to cancel bet')
-
         saymoney()
 
         try:
             thebet = int(input('\nHow much to bet? '))
-        except:
+        except Exception:
             print('''
                 We cannot accept cents for bets.
                 We apologise for the inconvenience.
@@ -1035,91 +929,97 @@ def bet(lane):
         return menu
 
 
+def checkticket():
+    flag('bookie')
+
+    print('\nYour ticket:', u.ticket)
+    winner = u.possy[0]
+    winner.wins += 1
+    print('\nWinner:', winner)
+
+    if winner in u.ticket:
+        uwin(winner)
+    else: sh(2); print('\nBetter luck tomorrow..')
+
+    u.bag['ticket'] = 0
+
+
+def uwin(winner):
+    sh(5)
+    print('\n !! ! !! ! Winner ! !! ! !!')
+    sh(3)
+    saymoney()
+    sh(3)
+    a = u.ticket[winner] * winner.odds
+    winnings = round(a, 2)
+    u.money += winnings
+    print(f'\nYou receive ${winnings:0.2f}!')
+    sh(3)
+    saymoney()
+
+
+def bookiebet():
+    print('\nInside the small tent you tap start on the betting terminal..')
+
+    saymoney()
+
+    print('\n  \\|  Enter lane number to bet on horse  \n')
+
+    sh(0.23)
+
+    for lano, horsey in u.lanes.items():
+        print(f'   |  {lano}  {horsey}')
+
+    lane = 23
+
+    while lane - 1 not in range(u.horses_per) and lane != 0:
+        try:
+            lane = int(input("\ntype 0 to close betting\n"))
+            if u.lanes[lane] in u.ticket:
+                print('\n    You have bet on that horse already')
+                print('  Choose another one..\n')
+                print(u.lanes)
+                lane = 23
+        except Exception:
+            continue
+
+    if lane != 0:
+        return bet(lane)
+
+    if not u.ticket: return menu
+
+    print(u.ticket)
+
+    betdone()
+
+    return menu
+
+
 def bookie():
     '''betting before race, check ticket after race'''
 
     clr()
 
     if u.betyet == 0:
-
-        print('\nInside the small tent you tap start on the betting terminal..')
-
-        saymoney()
-
-        print('\n  \\|  Enter lane number to bet on horse  \n')
-
-        sh(0.23)
-
-        for lano, horsey in u.lanes.items():
-            print('   |  ' + str(lano) + '  ' + horsey.name)
-
-        lane = 23
-
-        while lane - 1 not in range(u.horses_per):
-            if lane == 0: break
-            try:
-                lane = int(input("\ntype 0 to close betting\n"))
-                if u.lanes[lane] in u.ticket:
-                    print('\n    You have bet on that horse already')
-                    print('  Choose another one..\n')
-                    print(u.lanes)
-                    lane = 23
-            except: continue
-
-        if lane != 0:
-            return bet(lane)
-
-        if not u.ticket: return menu
-        # instead of if len(u.ticket) == 0
-
-        print(u.ticket)
-
-        betdone()
-
-        return menu
-
+        return bookiebet()
     else:
-
-        flag('bookie')
-
-        print('\nYour ticket:', u.ticket)
-        winner = u.possy[0]
-        winner.wins += 1
-        print('\nWinner:', winner)
-
-        if winner in u.ticket:
-            sh(5)
-            print('\n !! ! !! ! Winner ! !! ! !!')
-            sh(3)
-            saymoney()
-            sh(3)
-            a = u.ticket[winner] * winner.odds
-            winnings = round(a, 2)
-            u.money += winnings
-            print('\nYou receive $' + str(format(winnings, '0.2f')) + '!')
-            sh(3)
-            saymoney()
-
-        else: sh(2); print('\nBetter luck tomorrow..')
-
-        u.bag['ticket'] = 0
-
+        checkticket()
     return menu
 
 
 def sumting(something):
     '''lidda bidda sumpin sumpin'''
 
-    sh(1.5); print('\n    You have come a long way,', u.name); sh(2)
+    sh(1.5); print('\n    You have come a long way,', u); sh(2)
     print('\nIt is me, May Lee'); sh(1.5)
-    print('Come with me,', u.name); sh(1.5)
+    print('Come with me,', u); sh(1.5)
     print('\n     I will show you'); sh(2)
     gong = input('\n(will you go with May Lee?)\n')
     if 'n' in gong.lower():
         return something
 
     something = ('\nMuch good. Time for prepare.' +
-                 '\n   Look out for me, ' + u.name +
+                 '\n   Look out for me, ' + u +
                  '. I will come for you soon. \n\n' +
                  'You will need about $2350\n  ')
     flag('garden')
@@ -1156,7 +1056,6 @@ def bio(lane):
     print('\nHorse rank:', horse.rank)
 
     if not horse.badges:
-        # instead of if len(horse.badges) == 0
         print('\nNo badges')
     else:
         print('\nHorse stars:', horse.stars)
@@ -1170,18 +1069,23 @@ def bio(lane):
 def choosehorses(numhorses):
     '''make a list of random horses for the game'''
 
+    print('enter choosehorses')
     gamehorses = []
     file = 'horselist.dat'
     wholelist = get(file)
+    print('wholelist got file')
+    print(wholelist)
 
+    print(len(gamehorses), numhorses)
     while len(gamehorses) < numhorses:
 
         randhorse = choice(wholelist).strip()
 
-        if randhorse in gamehorses: continue
+        if randhorse in gamehorses: quit()
 
         gamehorses.append(randhorse)
 
+    print('returning gamehorses')
     return gamehorses
 
 
@@ -1192,9 +1096,11 @@ def menu():
 
     for num, door in u.doors.items():
 
-        if door in u.flags and u.flags[door] == 1: continue
+        if door in u.flags and u.flags[door] == 1:
+            continue
 
-        print(' {0} - {1}'.format(num, door))
+        print(f' {num} - {door}')
+
 
     while True:
 
@@ -1206,8 +1112,7 @@ def menu():
         if (path in u.doors
                 and u.doors[path] in u.flags
                 and u.flags[u.doors[path]] == 0):
-            go = eval(u.doors[path])
-            return go
+            return eval(u.doors[path])
 
 
 def gameover():
@@ -1441,13 +1346,17 @@ def setup():
 
     Horse.counter = 0
 
-    print('\nMaximize your window\n')
-
-    horses69 = 'Horses per race, ' + u.name + '? (enter 6-9) \n '
+    print('\nMaximize your window for Maximum fun\n')
 
     while u.horses_per < 6 or u.horses_per > 9:
-        try: u.horses_per = int(input(horses69))
-        except: continue
+        horses69 = input(
+            f'Horses per race, {u.name}? (enter 6-9)\n'
+        )
+
+        try: u.horses_per = int(horses69)
+
+        except Exception:
+            continue
 
     u.numhorses = u.horses_per * u.horse_multi + d(2, 3)
     u.gamehorses = choosehorses(u.numhorses)
@@ -1460,8 +1369,8 @@ def setup():
         u.D[horse.number] = horse  # instance into dictionary
 
         print('Importing..')
-        print(format(horse.number, '02d'), horse.name)
-        print('star:', horse.rank)
+        print(f'{horse.number:02d} {horse}')
+        print(f'star: {horse.rank}')
         print('---------------------------------')
 
         if horse.rank == 1:
@@ -1488,13 +1397,13 @@ def save():
 
     u.loadnum += 1
 
-    saving = u.name + str(u.loadnum) + '.dat'
+    saving = f'{u.name}{u.loadnum}.save'
 
     put(u, saving)
 
-    print('\nGame saved,', u.name + '..')
+    print(f'\nGame saved, {u}..')
     sh(0.7)
-    print('\nYour Load number is:', u.loadnum)
+    print(f'\nYour Load number is: {u.loadnum}')
     sh(5)
 
     return options
@@ -1509,14 +1418,11 @@ def put(data, savefile):
 
 def get(loadfile):
     ''' return the pickled data or return 'nofile' '''
-
     try:
         with open(loadfile, 'rb') as jar:
             data = pickle.load(jar)
         return data
-    except:
-        print('No load file to load..')
-        sh(3)
+    except Exception:
         return 'nofile'
 
 
@@ -1531,22 +1437,22 @@ def load():
 
     try:
         if u: name = u.name
-    except:
+    except Exception:
         name = input('\nEnter your name\n').strip()
 
     loadnum = input('\nEnter your load number\n')
-    loadfile = name + loadnum + '.dat'
+    loadfile = name + loadnum + '.save'
 
     see = get(loadfile)
 
     if see == 'nofile':
         print('no file to load!')
-        sh(3)
+        pause(3)
         try:
             if u: return options
-        except:
+        except Exception:
             print('starting new game..')
-            sh(3)
+            pause(3)
             return main(thegame='new')
 
     u = see
@@ -1554,8 +1460,10 @@ def load():
     # load success
 
     Horse.counter = len(u.gamehorses)
-    loaded = 'Loaded.. Welcome back, ' + u.name
-    sh(1.5); print(loaded); sh(3)
+    loaded = f'Loaded.. Welcome back {u}.'
+    sh(1.5)
+    print(loaded)
+    sh(3)
 
     clr()
     sh(1)
@@ -1563,8 +1471,8 @@ def load():
     for horse in u.D.values():
 
         print('Importing..')
-        print(format(horse.number, '02d'), horse.name)
-        print('star:', horse.rank)
+        print(f'{horse.number:02d} {horse}')
+        print(f'star: {horse.rank}')
         print('---------------------------------')
         sh(0.23)
 
@@ -1584,13 +1492,20 @@ def main(thegame='load'):
 
     while thegame != 'new':
 
-        print('\n    1 - New game\n    2 - Load')
+        print('''
+              
+              1 - New game
+              2 - Load
+
+              q - quit
+
+              ''')
         hmm = input('\n? ')
+        if hmm == 'q': return quit
         if hmm == '2': return load
         if hmm == '1': thegame = 'new'
 
     while True:
-
         you = input('Enter your name: ').strip()
         if not you: continue
         # hi
@@ -1599,12 +1514,11 @@ def main(thegame='load'):
 
 
 def wonderwall(egg):
-    '''the humpty dumpty loop trick'''
+    '''humpty dumpty loop'''
 
     while Heart is True:
-
-        cream = egg()
-        egg = cream
+        egg = egg()
 
 
-wonderwall(main)
+if __name__ == '__main__':
+    wonderwall(main)
