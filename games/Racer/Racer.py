@@ -126,7 +126,7 @@ def startpossy():
     oddslist = sorted(sortpossy)
     u.possy.extend(sortpossy[oddz] for oddz in oddslist)
 
-
+#breaka breaka
 def startrace():
     startpossy()
     switch()
